@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Camera, MapPin, Gift, Users, TrendingUp, Award } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const features = [
@@ -65,13 +66,16 @@ const Index = () => {
               Share your dining experiences and earn 5% discounts. See authentic, current photos before you visit.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button size="lg" className="min-w-[160px]">
-                <Camera className="mr-2 h-5 w-5" />
-                Get Started
+              <Button size="lg" className="min-w-[160px]" asChild>
+                <Link to="/register">
+                  <Camera className="mr-2 h-5 w-5" />
+                  Get Started
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="min-w-[160px]">
-                <MapPin className="mr-2 h-5 w-5" />
-                Explore Nearby
+              <Button size="lg" variant="outline" className="min-w-[160px]" asChild>
+                <Link to="/login">
+                  Sign In
+                </Link>
               </Button>
             </div>
           </div>
@@ -178,9 +182,11 @@ const Index = () => {
             <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
               Join thousands of food lovers discovering authentic dining experiences
             </p>
-            <Button size="lg" variant="secondary" className="min-w-[160px]">
-              <Camera className="mr-2 h-5 w-5" />
-              Join AmbienSee
+            <Button size="lg" variant="secondary" className="min-w-[160px]" asChild>
+              <Link to="/register">
+                <Camera className="mr-2 h-5 w-5" />
+                Join AmbienSee
+              </Link>
             </Button>
           </CardContent>
         </Card>
