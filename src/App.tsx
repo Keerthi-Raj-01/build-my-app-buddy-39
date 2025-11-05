@@ -10,6 +10,11 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import Restaurants from "./pages/Restaurants";
+import RestaurantDetail from "./pages/RestaurantDetail";
+import Camera from "./pages/Camera";
+import PhotoReview from "./pages/PhotoReview";
+import Discounts from "./pages/Discounts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +33,11 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/restaurants" element={<Restaurants />} />
+          <Route path="/restaurant/:id" element={<RestaurantDetail />} />
+          <Route path="/camera" element={<Camera />} />
+          <Route path="/photo-review" element={<PhotoReview />} />
+          <Route path="/discounts" element={<Discounts />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
