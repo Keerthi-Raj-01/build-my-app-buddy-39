@@ -15,6 +15,8 @@ import RestaurantDetail from "./pages/RestaurantDetail";
 import Camera from "./pages/Camera";
 import PhotoReview from "./pages/PhotoReview";
 import Discounts from "./pages/Discounts";
+import Leaderboard from "./pages/Leaderboard";
+import Activity from "./pages/Activity";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +39,8 @@ const App = () => (
           <Route path="/restaurant/:id" element={<RestaurantDetail />} />
           <Route path="/camera" element={<Camera />} />
           <Route path="/photo-review" element={<PhotoReview />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/activity" element={<Activity />} />
           <Route path="/discounts" element={<Discounts />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

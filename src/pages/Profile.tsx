@@ -1,8 +1,10 @@
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { GridLayout } from "@/components/layout/GridLayout";
+import { BottomNav } from "@/components/layout/BottomNav";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AchievementBadge } from "@/components/gamification/AchievementBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -27,13 +29,41 @@ const Profile = () => {
     { label: "Points", value: "850", icon: TrendingUp },
   ];
 
-  const achievements = [
-    { title: "First Upload", icon: Camera, earned: true },
-    { title: "10 Photos", icon: Award, earned: true },
-    { title: "Early Adopter", icon: Gift, earned: true },
-    { title: "Explorer", icon: MapPin, earned: false },
-    { title: "Top Contributor", icon: TrendingUp, earned: false },
-    { title: "Community Leader", icon: Users, earned: false },
+  const detailedAchievements = [
+    {
+      icon: "🏆",
+      title: "First Upload",
+      description: "Upload your first restaurant photo",
+      points: 50,
+      unlocked: true,
+    },
+    {
+      icon: "📸",
+      title: "Photography Pro",
+      description: "Upload 50 photos",
+      points: 500,
+      unlocked: false,
+      progress: 12,
+      total: 50,
+    },
+    {
+      icon: "⭐",
+      title: "Rising Star",
+      description: "Get 100 total likes",
+      points: 200,
+      unlocked: false,
+      progress: 34,
+      total: 100,
+    },
+    {
+      icon: "🎯",
+      title: "Consistency King",
+      description: "Upload photos 7 days in a row",
+      points: 300,
+      unlocked: false,
+      progress: 3,
+      total: 7,
+    },
   ];
 
   const uploadHistory = [
@@ -59,6 +89,7 @@ const Profile = () => {
       date: "1 week ago",
     },
   ];
+
 
   return (
     <AppLayout>
@@ -149,27 +180,9 @@ const Profile = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
-            {achievements.map((achievement) => (
-              <div
-                key={achievement.title}
-                className={`p-4 rounded-xl border text-center transition-smooth ${
-                  achievement.earned
-                    ? "bg-card hover:border-primary/50"
-                    : "bg-muted/30 opacity-50"
-                }`}
-              >
-                <div className="flex justify-center mb-2">
-                  <div className={`p-2 rounded-lg ${
-                    achievement.earned ? "bg-primary/10" : "bg-muted"
-                  }`}>
-                    <achievement.icon className={`h-5 w-5 ${
-                      achievement.earned ? "text-primary" : "text-muted-foreground"
-                    }`} />
-                  </div>
-                </div>
-                <p className="text-xs font-medium">{achievement.title}</p>
-              </div>
+          <div className="space-y-3">
+            {detailedAchievements.map((achievement, index) => (
+              <AchievementBadge key={index} {...achievement} />
             ))}
           </div>
         </div>
@@ -206,6 +219,7 @@ const Profile = () => {
           </GridLayout>
         </div>
       </ScreenLayout>
+      <BottomNav />
     </AppLayout>
   );
 };

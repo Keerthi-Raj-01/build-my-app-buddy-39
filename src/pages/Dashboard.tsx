@@ -1,4 +1,5 @@
 import { AppLayout } from "@/components/layout/AppLayout";
+import { BottomNav } from "@/components/layout/BottomNav";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { GridLayout } from "@/components/layout/GridLayout";
 import { Button } from "@/components/ui/button";
@@ -193,6 +194,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </ScreenLayout>
+      <BottomNav />
     </AppLayout>
   );
 };
