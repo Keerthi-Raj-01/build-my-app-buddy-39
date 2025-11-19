@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { GridLayout } from "@/components/layout/GridLayout";
@@ -6,9 +7,80 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Camera, MapPin, Phone, Clock, Share2, Navigation } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { toast } from "@/hooks/use-toast";
+
+interface VerifiedPhoto {
+  id: string;
+  image_url: string;
+  timestamp: string;
+  user_profile?: {
+    display_name: string | null;
+  } | null;
+}
 
 const RestaurantDetail = () => {
   const { id } = useParams();
+  const [verifiedPhotos, setVerifiedPhotos] = useState<VerifiedPhoto[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchVerifiedPhotos();
+  }, [id]);
+
+  const fetchVerifiedPhotos = async () => {
+    try {
+      const { data: photos, error } = await supabase
+        .from('restaurant_photos')
+        .select('*')
+        .eq('restaurant_id', id || '')
+        .eq('verified', true)
+        .order('timestamp', { ascending: false })
+        .limit(12);
+
+      if (error) throw error;
+
+      if (photos && photos.length > 0) {
+        const userIds = [...new Set(photos.map(p => p.user_id))];
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, display_name')
+          .in('id', userIds);
+
+        const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+        
+        const photosWithProfiles = photos.map(photo => ({
+          ...photo,
+          user_profile: profileMap.get(photo.user_id) || null
+        }));
+
+        setVerifiedPhotos(photosWithProfiles);
+      }
+    } catch (error) {
+      console.error('Error fetching verified photos:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load restaurant photos.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getTimeAgo = (timestamp: string) => {
+    const now = new Date();
+    const photoDate = new Date(timestamp);
+    const diffMs = now.getTime() - photoDate.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffHours < 1) return 'Just now';
+    if (diffHours < 24) return `${diffHours} hours ago`;
+    if (diffDays === 1) return 'Yesterday';
+    return `${diffDays} days ago`;
+  };
 
   const restaurant = {
     name: "Sunset Bistro",
@@ -121,32 +193,46 @@ const RestaurantDetail = () => {
         {/* Recent Photos */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">Recent Photos</h2>
-            <Badge variant="secondary">{restaurant.photoCount} total</Badge>
+            <h2 className="text-xl font-bold">Verified Photos</h2>
+            <Badge variant="secondary">{verifiedPhotos.length} verified</Badge>
           </div>
 
-          <GridLayout>
-            {recentPhotos.map((photo) => (
-              <Card key={photo.id} className="overflow-hidden group cursor-pointer">
-                <div className="aspect-square relative overflow-hidden">
-                  <img
-                    src={photo.url}
-                    alt="Restaurant photo"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-smooth"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-smooth" />
-                  <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-smooth">
-                    <p className="text-white text-sm font-medium">{photo.user}</p>
-                    <p className="text-white/80 text-xs">{photo.time}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </GridLayout>
-
-          <Button variant="outline" className="w-full mt-4">
-            Load More Photos
-          </Button>
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <LoadingSpinner size="lg" />
+            </div>
+          ) : verifiedPhotos.length === 0 ? (
+            <Card>
+              <CardContent className="py-12 text-center">
+                <Camera className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-lg text-muted-foreground mb-2">No verified photos yet</p>
+                <p className="text-sm text-muted-foreground">Be the first to share this restaurant!</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              <GridLayout>
+                {verifiedPhotos.map((photo) => (
+                  <Card key={photo.id} className="overflow-hidden group cursor-pointer">
+                    <div className="aspect-square relative overflow-hidden">
+                      <img
+                        src={photo.image_url}
+                        alt="Restaurant photo"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-smooth"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-smooth" />
+                      <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-smooth">
+                        <p className="text-white text-sm font-medium">
+                          {photo.user_profile?.display_name || 'Anonymous'}
+                        </p>
+                        <p className="text-white/80 text-xs">{getTimeAgo(photo.timestamp || '')}</p>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </GridLayout>
+            </>
+          )}
         </div>
 
         {/* CTA */}

@@ -546,6 +546,10 @@ export type Database = {
             }
             Returns: string
           }
+      assign_admin_role_to_user: {
+        Args: { user_email: string }
+        Returns: undefined
+      }
       disablelongtransactions: { Args: never; Returns: string }
       dropgeometrycolumn:
         | {
