@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Camera, MapPin, Gift, TrendingUp, Settings, Bell, Image as ImageIcon } from "lucide-react";
+import { Camera, MapPin, Gift, TrendingUp, Settings, Bell, Image as ImageIcon, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Dashboard = () => {
+  const { isAdmin } = useAuth();
   const stats = [
     {
       label: "Photos Uploaded",
@@ -112,6 +114,14 @@ const Dashboard = () => {
               </Link>
             </Button>
           </div>
+          {isAdmin && (
+            <Button size="lg" variant="default" className="w-full h-16 mt-3" asChild>
+              <Link to="/admin">
+                <Shield className="mr-2 h-5 w-5" />
+                Admin Dashboard
+              </Link>
+            </Button>
+          )}
         </div>
 
         {/* Stats */}
